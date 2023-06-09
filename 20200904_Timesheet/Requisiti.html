@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>Gestione Foglio Ore</title>
+  <style>
+      code{white-space: pre-wrap;}
+      span.smallcaps{font-variant: small-caps;}
+      span.underline{text-decoration: underline;}
+      div.column{display: inline-block; vertical-align: top; width: 50%;}
+  </style>
+  <link rel="stylesheet" href=".css.css" />
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+<body>
+<header id="title-block-header">
+<h1 class="title">Gestione Foglio Ore</h1>
+</header>
+<!--
+> To generate html and pdf use
+> ```bash
+> $ pandoc -s -f markdown+Smart requirements.md -c .css.css -o requirements.html
+> $ pandoc -s -f markdown+Smart requirements.md -o requirements.pdf
+> ```
+-->
+<p>Si realizzi un’applicazione per gestire i fogli ore di un’azienda.</p>
+<p>Tutte le classi si trovano nel package <code>timesheet</code>. La classe principale è <code>Timesheet</code>. La classe <code>TestApp</code> nel package <code>example</code> contiene un esempio. Le eccezioni sono lanciate mediante la classe <code>TimesheetException</code>.</p>
+<p>È possibile accedere alla <a href="https://oop.polito.it/api">documentazione delle API Java</a>.</p>
+<h2 id="r1-calendario">R1 Calendario</h2>
+<p>Il metodo <code>setHolidays(int... holidays)</code> permette di impostare i giorni festivi dell’anno. I giorni festivi sono rappresentati da un insieme di numeri interi compresi tra 1 e 365, forniti come parametro del metodo. Ogni data è il numero del giorno all’interno dell’anno (per esempio il primo gennaio è <em>1</em>, il 31 dicembre è <em>365</em>). Si supponga che l’anno non sia mai bisestile. I giorni associati a numeri minori o uguali a <em>0</em> oppure ripetuti devono essere ignorati. Ulteriori chiamate allo stesso metodo non producono alcun effetto.</p>
+<p>Il metodo <code>isHoliday(int day)</code> ritorna un valore booleano che sarà <em>true</em> se il giorno passato come parametro è festivo, <em>false</em> in tutti gli altri casi.</p>
+<p>Il metodo <code>setFirstWeekDay(int weekDay)</code> riceve come parametro un numero intero che rappresenta il giorno della settimana del primo gennaio. Il numero <em>0</em> rappresenta una domenica, il numero <em>1</em> un lunedì ecc. Se il numero fornito è minore di <em>0</em> o maggiore di <em>6</em> viene lanciata l’eccezione <code>TimesheetException</code>. Se il metodo viene chiamato più volte il nuovo valore sovrascrive il precedente.</p>
+<p>Il metodo <code>getWeekDay(int day)</code> ritorna il numero del giorno della settimana dato il numero del giorno dell’anno. Per esempio, se il primo giorno dell’anno è un venerdì, al giorno <em>2</em> corrisponde un sabato, ovvero il giorno della settimana <em>6</em>. Se il numero del giorno fornito è minore o uguale a <em>0</em> viene lanciata l’eccezione <code>TimesheetException</code>. Se il giorno della settimana del primo gennaio non è definito, si assuma sia un lunedì.</p>
+<h2 id="r2-progetti">R2 Progetti</h2>
+<p>Il metodo <code>createProject(String projectName, int maxHours)</code> crea un nuovo progetto a cui sono associate un numero massimo di ore che possono essere dedicate ad esso. Si supponga che i nomi dei progetti siano univoci. Se il numero di ore è negativo viene lanciata l’eccezione <code>TimesheetException</code>. È possibile modificare il numero massimo di ore chiamando più volte il metodo per lo stesso progetto.</p>
+<p>Il metodo <code>getProjects()</code> ritorna la lista dei progetti disponibili ordinati in modo decrescente per numero massimo di ore e quindi alfabeticamente. Il formato da utilizzare nella lista è: <code>"{projectName}: {maxHours}"</code>.</p>
+<p>Il metodo <code>createActivity(String projectName, String activityName)</code> crea una nuova attività associata ad un certo progetto. Si supponga che i nomi delle attività siano univoci all’interno del progetto. Se il progetto non è definito viene lanciata l’eccezione <code>TimesheetException</code>.</p>
+<p>Il metodo <code>closeActivity(String projectName, String activityName)</code> imposta come completata l’attività associata ad un certo progetto. Inizialmente tutte le attività sono non completate. Se il progetto o l’attività non sono definiti viene lanciata l’eccezione <code>TimesheetException</code>.</p>
+<p>Il metodo <code>getOpenActivities(String projectName)</code> ritorna la lista delle attività non completate associate ad un certo progetto, ordinata alfabeticamente. Se il progetto non è definito viene lanciata l’eccezione <code>TimesheetException</code>.</p>
+<h2 id="r3-lavoratori">R3 Lavoratori</h2>
+<p>Il metodo <code>createProfile(int... workHours)</code> definisce un nuovo profilo orario, ovvero il numero massimo di ore che un lavoratore può effettuare per giorno della settimana. Il vettore di numeri interi deve contenere esattamente sette valori, dove il primo si riferisce alla domenica e l’ultimo al sabato. Per esempio, se il vettore è <em>[0, 8, 8, 8, 8, 8, 0]</em> il lavoratore può svolgere al massimo otto ore al giorno dal lunedì al venerdì. Se il vettore non contiene sette valori viene lanciata l’eccezione <code>TimesheetException</code>. Il metodo ritorna un identificativo univoco associato al profilo orario generato casualmente dal sistema.</p>
+<p>Il metodo <code>getProfile(String profileID)</code> ritorna un profilo orario dato il suo identificativo. Se l’identificativo non è definito viene lanciata l’eccezione <code>TimesheetException</code>. Si utilizzi un formato simile al seguente: “Sun: 0; Mon: 8; Tue: 8; Wed: 8; Thu: 8; Fri: 8; Sat: 0”.</p>
+<p>Il metodo <code>createWorker(String name, String surname, String profileID)</code> aggiunge un nuovo lavoratore al sistema e ritorna un identificativo univoco associato al lavoratore generato casualmente dal sistema. Se l’identificativo del profilo orario non è valido viene lanciata l’eccezione <code>TimesheetException</code>.</p>
+<p>Il metodo <code>getWorker(String workerID)</code> ritorna una stringa nel formato <code>"{name} {surname} ({profileString})"</code>, dove <code>"{profileString}"</code> è il formato definito da <code>getWorkerProfile(String profileID)</code>, dato l’identificativo del lavoratore. Se l’identificativo del lavoratore non è valido viene lanciata l’eccezione <code>TimesheetException</code>.</p>
+<p><strong>Suggerimento:</strong> il metodo per generare gli identificativi univoci è lasciato alla scelta dello sviluppatore, purché garantisca l’unicità per ogni istanza della classe Timesheet.</p>
+<h2 id="r4-rendicontazione">R4 Rendicontazione</h2>
+<p>Il metodo <code>addReport(String workerID, String projectName, String activityName, int day, int workedHours)</code> aggiunge una nuova voce al foglio ore del lavoratore. È necessario verificare che le seguenti condizioni siano tutte soddisfatte, altrimenti viene lanciata l’eccezione <code>TimesheetException</code>:</p>
+<ul>
+<li>l’identificativo del lavoratore sia valido;</li>
+<li>il giorno sia maggiore di <em>0</em> e non sia un festivo;</li>
+<li>il numero di ore specificato non sia negativo;</li>
+<li>il numero di ore sia compatibile con il profilo orario del lavoratore;</li>
+<li>il progetto e l’attività siano definiti;</li>
+<li>le ore totali del progetto non superino il valore massimo ammesso;</li>
+<li>l’attività non sia già stata completata.</li>
+</ul>
+<p>Il metodo <code>getProjectHours(String projectName)</code> ritorna il numero di ore lavorate associate ad un certo progetto. Se il progetto non è definito viene lanciata l’eccezione <code>TimesheetException</code>.</p>
+<p>Il metodo <code>getWorkedHoursPerDay(String workerID, int day)</code> ritorna il numero di ore lavorate dato l’identificativo del lavoratore ed il giorno di lavoro. Se l’identificativo del lavoratore non è valido oppure il numero del giorno è minore o uguale a <em>0</em> viene lanciata l’eccezione <code>TimesheetException</code>.</p>
+<h2 id="r5-statistiche">R5 Statistiche</h2>
+<p>Il metodo <code>countActivitiesPerWorker()</code> ritorna una mappa che associa ad ogni lavoratore il numero totale di attività distinte svolte, ovvero quelle attività per cui vi è almeno un’ora di rendicontazione. Si ricorda che le attività sono univoche all’interno di ogni progetto, quindi eventuali attività con lo stesso nome ma appartenenti a progetti diversi devono essere considerate distinte.</p>
+<p>Il metodo <code>getRemainingHoursPerProject()</code> ritorna una mappa che associa ogni progetto al numero di ore ancora disponibili, ovvero il numero massimo di ore meno le ore giè rendicontate.</p>
+<p>Il metodo <code>getHoursPerActivityPerProject()</code> ritorna una mappa che associa ad ogni progetto una mappa che associa ogni attività del progetto al numero totale di ore rendicontate.</p>
+</body>
+</html>

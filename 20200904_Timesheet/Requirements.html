@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>Timesheet management</title>
+  <style>
+      code{white-space: pre-wrap;}
+      span.smallcaps{font-variant: small-caps;}
+      span.underline{text-decoration: underline;}
+      div.column{display: inline-block; vertical-align: top; width: 50%;}
+  </style>
+  <link rel="stylesheet" href=".css.css" />
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+<body>
+<header id="title-block-header">
+<h1 class="title">Timesheet management</h1>
+</header>
+<!--
+> To generate html and pdf use
+> ```bash
+> $ pandoc -s -f markdown+Smart requirements.md -c .css.css -o requirements.html
+> $ pandoc -s -f markdown+Smart requirements.md -o requirements.pdf
+> ```
+-->
+<p>Implement the application for managing the timesheets in a small company.</p>
+<p>All classes are in the package <code>timesheet</code>. The facade class is <code>Timesheet</code>. The class <code>TestApp</code> in the package <code>example</code> contains an example. Exceptions are thrown through the class <code>TimesheetException</code>.</p>
+<p>It is possible to access <a href="http://softeng.polito.it/courses/docs/api/index.html">Java API documentation</a>.</p>
+<h2 id="r1-calendar">R1 Calendar</h2>
+<p>The method <code>setHolidays(int... holidays)</code> set the holidays in the calendar. Holidays are indicated by an array of integers representing the days in the year. That is, <strong>1</strong> is January, 1st; and <strong>365</strong> is December, 31st. Leap years are not considered. Numbers less than <strong>1</strong> should be ignored. The same day may be specified multiple times. After holidays have been set, subsequent calls to the method will be ignored.</p>
+<p>The method <code>isHoliday(int day)</code> returns a Boolean value: <strong>true</strong> if <code>day</code> is a holiday; <strong>false</strong> if not.</p>
+<p>The method <code>setFirstWeekDay(int weekDay)</code> gets as parameter an integer representing the day of the week of January, 1st. The number <strong>0</strong> stands for Sunday, <strong>1</strong> for Monday, etc. If <code>weekDay</code> is less than <strong>0</strong> or greater than <strong>6</strong>, the method throws the exception <code>TimesheetException</code>. If invoked multiple times, the method overwrites the value of the first day of the year. By default, the first day of the year is assumed to be Monday (<strong>1</strong>).</p>
+<p>The method <code>getWeekDay(int day)</code> returns the day of the week (<strong>0-6</strong>) corresponding to the given day of the year (<strong>1-365</strong>). For example, if the first day of the year is Friday (i.e., <strong>5</strong>), the method called with <code>day = 2</code> will return <strong>6</strong> (Saturday). If <code>day</code> is less than <strong>1</strong>, the method throws the exception <code>TimesheetException</code>.</p>
+<h2 id="r2-projects">R2 Projects</h2>
+<p>The method <code>createProject(String projectName, int maxHours)</code> creates a new project with a maximum number of allocated hours. Project names are unique. If <code>maxHours</code> is negative, the method throws the exception <code>TimesheetException</code>. It is possible to modify the maximum number of hours allocated to a specific project <code>projectName</code> by calling the method multiple times.</p>
+<p>The method <code>getProjects()</code> returns all known projects as a <code>List</code> of strings. Projects in the list are sorted in descending order by the maximum number of allocated hours, then alphabetically (i.e., in ascending order) by the project name. The format of the description strings in the list is: <code>"{projectName}: {maxHours}"</code>.</p>
+<p>The method <code>createActivity(String projectName, String activityName)</code> creates a new activity linked to a given project. Activity names inside the same project can be assumed to be unique. If the project has not been previously defined, the method throws the exception <code>TimesheetException</code>.</p>
+<p>The method <code>closeActivity(String projectName, String activityName)</code> marks as <em>completed</em> the given activity inside the given project. Initially all activities are marked as <em>not completed</em>. If the project has not been previously defined, or the activity does not exists in the project, the method throws the exception <code>TimesheetException</code>.</p>
+<p>The method <code>getOpenActivities(String projectName)</code> returns a <code>List</code> of activities of the given project that have not yet been marked as <em>completed</em>. Activities in the list are sorted alphabetically. If the project has not been previously defined, the method throws the exception <code>TimesheetException</code>.</p>
+<h2 id="r3-workers">R3 Workers</h2>
+<p>The method <code>createProfile(int... workHours)</code> creates a new hourly profile, that is, the maximum number of hours that one may work in each day of the week. The array of integers must contain exactly 7 values, one for each day of the week, with the first referring to Sunday and the last to Saturday. For instance, if <code>workHours</code> is <strong>[0, 8, 8, 8, 8, 8, 0]</strong>, the worker may be exploited for eight hours Monday to Friday, and can rest in the weekend. The method returns a string with the random unique identifier associated to the profile. If <code>workHours</code> does not contain seven values, the method throws the exception <code>TimesheetException</code>.</p>
+<p>The method <code>getProfile(String profileID)</code> returns a hourly profile given its unique identifier as a string. The format follows this example: “Sun: 0; Mon: 8; Tue: 8; Wed: 8; Thu: 8; Fri: 8; Sat: 0”. If the hourly profile <code>profileID</code> has not been previously created, the method throws the exception <code>TimesheetException</code>.</p>
+<p>The method <code>createWorker(String name, String surname, String profileID)</code> creates a worker with a definite hourly profile. The method returns a string with the random unique identifier associated to the worker. If the hourly profile <code>profileID</code> has not been previously created, the method throws the exception <code>TimesheetException</code>.</p>
+<p>The method <code>getWorker(String workerID)</code> returns a string describing a worker given the worker’s unique identifier. The string is in the format <code>"{name} {surname} ({profileString})"</code>, where <code>"{profileString}"</code> is the format used by <code>getWorkerProfile(String profileID)</code>. If the worker <code>workerID</code> has not been previously created, the method throws the exception <code>TimesheetException</code>.</p>
+<p><strong>Hint:</strong> a method for generating the unique identifiers can be chosen by the developer, but it must guarantee the uniqueness in each instance of the class <code>Timesheet</code>.</p>
+<h2 id="r4-report">R4 Report</h2>
+<p>The method <code>addReport(String workerID, String projectName, String activityName, int day, int workedHours)</code> adds a new entry to the timesheet of a given worker. It is required to verify all the following conditions, and if they are not all satisfied the method throws the exception <code>TimesheetException</code>:</p>
+<ul>
+<li>the worker identifier should exist;</li>
+<li>the day should be greater than <strong>0</strong> and less than <strong>366</strong>, and not a holiday;</li>
+<li>the number of hours should not be negative;</li>
+<li>the number of hours should be compatible with the hourly profile of the worker;</li>
+<li>the project should exist;</li>
+<li>the activity should exist inside the project;</li>
+<li>the total number of hours allocated to the project should be less than its maximum number of hours;</li>
+<li>The activity should not be completed.</li>
+</ul>
+<p>The method <code>getProjectHours(String projectName)</code> returns the total number of reported hours associated to the given project. If the project has not been previously defined, the method throws the exception <code>TimesheetException</code>.</p>
+<p>The method <code>getWorkedHoursPerDay(String workerID, int day)</code> returns the total number of reported hours by the given worker in the given day of the year. If the worker has not been previously defined, the day is less than <strong>1</strong>, the method throws the exception <code>TimesheetException</code>.</p>
+<h2 id="r5-statistiche">R5 Statistiche</h2>
+<p>The method <code>countActivitiesPerWorker()</code> returns a <code>Map</code> that maps each worker to all his distinct activities, that is, the activities where there is at least <strong>1</strong> hour reported. Please note that activities name are unique only inside a project: activities in different projects must be considered distinct even if they have the same name.</p>
+<p>The method <code>getRemainingHoursPerProject()</code> returns a <code>Map</code> that maps each project to the number of hours still available, that is, the difference between the maximum number of hours and the reported ones.</p>
+<p>The method <code>getHoursPerActivityPerProject()</code> returns a <code>Map</code> that maps each project to another <code>Map</code>. This second collection is mapping each activity of the project to the total number of hours currently reported.</p>
+</body>
+</html>
