@@ -1,10 +1,16 @@
 package delivery;
 
-import java.util.List;
-import java.util.Map;
-
+import java.util.*;
+import static java.util.stream.Collectors.*;
 
 public class Delivery {
+	
+	private Set<String> categories = new HashSet<String>();
+	private Map<String,Restaurant> restaurants = new TreeMap<String,Restaurant>();
+	
+	private int nextOrderId = 1;
+	private List<Order> orders = new ArrayList<Order>();
+	
 	// R1
 	
     /**
@@ -14,6 +20,10 @@ public class Delivery {
      * @throws DeliveryException if the category is already available.
      */
 	public void addCategory (String category) throws DeliveryException {
+		if (categories.contains(category))
+			throw new DeliveryException();
+		
+		categories.add(category);
 	}
 	
 	/**
@@ -22,7 +32,7 @@ public class Delivery {
 	 * @return list of category names
 	 */
 	public List<String> getCategories() {
-		return null;
+		return categories.stream().toList();
 	}
 	
 	/**
@@ -33,6 +43,11 @@ public class Delivery {
 	 * @throws DeliveryException if the category is not defined.
 	 */
 	public void addRestaurant (String name, String category) throws DeliveryException {
+		if (!categories.contains(category))
+			throw new DeliveryException();
+		
+		Restaurant r = new Restaurant(name, category);
+		restaurants.put(name,r);
 	}
 	
 	/**
@@ -44,7 +59,19 @@ public class Delivery {
 	 * @return sorted list of restaurant names
 	 */
 	public List<String> getRestaurantsForCategory(String category) {
-        return null;
+		Map<String,List<String>> restaurantsPerCategory = restaurants.values().stream()
+			.sorted()
+			.collect(
+				groupingBy(
+					Restaurant::getCategory,
+					mapping(Restaurant::getName, toList())
+				)
+			);
+		
+		if (!restaurantsPerCategory.containsKey(category))
+			return new ArrayList<String>();
+			
+        return restaurantsPerCategory.get(category);
 	}
 	
 	// R2
@@ -59,6 +86,10 @@ public class Delivery {
 	 * @throws DeliveryException if the dish name already exists
 	 */
 	public void addDish(String name, String restaurantName, float price) throws DeliveryException {
+		if (!restaurants.containsKey(restaurantName))
+			throw new DeliveryException();
+		
+		restaurants.get(restaurantName).addDish(name, price);
 	}
 	
 	/**
@@ -71,7 +102,20 @@ public class Delivery {
 	 * @return map restaurant -> dishes
 	 */
 	public Map<String,List<String>> getDishesByPrice(float minPrice, float maxPrice) {
-        return null;
+		Map<String,List<String>> dishesPerRestaurant = new HashMap<String,List<String>>();
+		
+		for (String rName : restaurants.keySet()) {
+			Restaurant r = restaurants.get(rName);
+			
+			List<String> dishesInRange = r.getDishes().stream()
+				.filter((Dish d) -> d.getPrice() >= minPrice && d.getPrice() <= maxPrice)
+				.map(Dish::getName).toList();
+			
+			if (dishesInRange.size() > 0)
+				dishesPerRestaurant.put(rName, dishesInRange);
+		}
+		
+        return dishesPerRestaurant;
 	}
 	
 	/**
@@ -83,7 +127,10 @@ public class Delivery {
 	 * @return alphabetically sorted list of dish names 
 	 */
 	public List<String> getDishesForRestaurant(String restaurantName) {
-        return null;
+		if (!restaurants.containsKey(restaurantName))
+			return new ArrayList<String>();
+		
+		return restaurants.get(restaurantName).getDishes().stream().sorted().map(Dish::getName).toList();
 	}
 	
 	/**
@@ -95,7 +142,11 @@ public class Delivery {
 	 * @return 
 	 */
 	public List<String> getDishesByCategory(String category) {
-        return null;
+		if (!categories.contains(category))
+			return new ArrayList<String>();
+		
+		return restaurants.values().stream().filter((Restaurant r) -> r.getCategory().equals(category))
+			.flatMap((Restaurant r) -> r.getDishes().stream()).map(Dish::getName).toList();
 	}
 	
 	//R3
@@ -117,7 +168,12 @@ public class Delivery {
 	 * @return order ID
 	 */
 	public int addOrder(String dishNames[], int quantities[], String customerName, String restaurantName, int deliveryTime, int deliveryDistance) {
-	    return -1;
+		Restaurant r = restaurants.get(restaurantName);
+		Order o = new Order(r, dishNames, quantities, customerName, deliveryTime, deliveryDistance);
+		o.setId(nextOrderId++);
+		orders.add(o);
+		
+	    return o.getId();
 	}
 	
 	/**
@@ -136,7 +192,16 @@ public class Delivery {
 	 * @return list of order IDs
 	 */
 	public List<Integer> scheduleDelivery(int deliveryTime, int maxDistance, int maxOrders) {
-        return null;
+		
+		List<Order> ordersToAssign = orders.stream()
+			.filter((Order o) -> {
+				return o.isPending() && o.getDeliveryTime() == deliveryTime && o.getDistance() <= maxDistance;
+			})
+			.sorted((Order o1, Order o2) -> Integer.valueOf(o1.getId()).compareTo(o2.getId()))
+			.limit(maxOrders).toList();
+		
+		ordersToAssign.forEach((Order o) -> o.setAssigned());
+        return ordersToAssign.stream().map(Order::getId).toList();
 	}
 	
 	/**
@@ -144,7 +209,7 @@ public class Delivery {
 	 * @return the unassigned orders count
 	 */
 	public int getPendingOrders() {
-        return -1;
+        return (int)orders.stream().filter((Order o) -> o.isPending()).count();
 	}
 	
 	// R4
@@ -156,6 +221,8 @@ public class Delivery {
 	 * @param rating           rating
 	 */
 	public void setRatingForRestaurant(String restaurantName, int rating) {
+		if (restaurants.containsKey(restaurantName))
+			this.restaurants.get(restaurantName).addRating(rating);
 	}
 	
 	/**
@@ -167,7 +234,11 @@ public class Delivery {
 	 * @return ordered list of restaurant names
 	 */
 	public List<String> restaurantsAverageRating() {
-        return null;
+		return restaurants.values().stream()
+			.sorted((Restaurant r1, Restaurant r2) -> Double.valueOf(r2.getAverageRating()).compareTo(Double.valueOf(r1.getAverageRating())))
+			.filter((Restaurant r) -> r.getAverageRating() != -1)
+			.map(Restaurant::getName)
+			.toList();
 	}
 	
 	//R5
@@ -178,7 +249,15 @@ public class Delivery {
 	 * @return map category -> order count
 	 */
 	public Map<String,Long> ordersPerCategory() {
-        return null;
+		Map<String,Long> ordersPerCat = orders.stream().collect(
+			groupingBy(Order::getRestaurantCategory, counting())
+		);
+		
+		for (Restaurant r : restaurants.values()) {
+			if (!ordersPerCat.containsKey(r.getCategory()))
+				ordersPerCat.put(r.getCategory(),0L);
+		}
+        return ordersPerCat;
 	}
 	
 	/**
@@ -187,6 +266,7 @@ public class Delivery {
 	 * @return restaurant name
 	 */
 	public String bestRestaurant() {
-        return null;
+        return restaurantsAverageRating().get(0);
 	}
 }
+ 
