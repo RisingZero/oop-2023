@@ -1,5 +1,6 @@
 package sports;
 import java.util.*;
+import static java.util.stream.Collectors.*;
 
  
 /**
@@ -7,6 +8,10 @@ import java.util.*;
  *
  */
 public class Sports {
+	
+	private SortedSet<String> activities = new TreeSet<>();
+	private Map<String,Category> categories = new HashMap<>();
+	private Map<String,Product> products = new HashMap<>();
 
     //R1
     /**
@@ -17,6 +22,12 @@ public class Sports {
      * @throws SportsException thrown if no activity is provided
      */
     public void defineActivities (String... activities) throws SportsException {
+    	if (activities == null || activities.length == 0)
+    		throw new SportsException("No activities passed");
+    	
+    	for (String a: activities) {
+    		this.activities.add(a);
+    	}
     }
 
     /**
@@ -25,7 +36,7 @@ public class Sports {
      * @return activities names sorted alphabetically
      */
     public List<String> getActivities() {
-        return null;
+        return activities.stream().toList();
     }
 
 
@@ -37,6 +48,11 @@ public class Sports {
      * @throws SportsException thrown if any of the specified activity does not exist
      */
     public void addCategory(String name, String... linkedActivities) throws SportsException {
+    	if (!activities.containsAll(Arrays.asList(linkedActivities)))
+    		throw new SportsException("Some activites are not inserted");
+    	
+    	Category c = new Category(name, linkedActivities);
+    	categories.put(name, c);
     }
 
     /**
@@ -45,7 +61,7 @@ public class Sports {
      * @return categories count
      */
     public int countCategories() {
-        return -1;
+        return categories.size();
     }
 
     /**
@@ -55,7 +71,15 @@ public class Sports {
      * @return list of categories (sorted alphabetically)
      */
     public List<String> getCategoriesForActivity(String activity) {
-        return null;
+    	if (!activities.contains(activity))
+    		return new ArrayList<>();
+    	
+    	return categories.values().stream()
+    		.filter((Category c) -> {
+    			return c.getActivities().contains(activity);
+    		})
+    		.sorted()
+    		.map(Category::getName).toList();
     }
 
     //R2
@@ -67,6 +91,11 @@ public class Sports {
      * @throws SportsException thrown in case of duplicate name
      */
     public void addProduct(String name, String activityName, String categoryName) throws SportsException {
+    	if (products.containsKey(name))
+    		throw new SportsException("Product exists");
+    	
+    	Product p = new Product(name, activityName, categories.get(categoryName));
+    	products.put(name, p);
     }
 
     /**
@@ -77,7 +106,16 @@ public class Sports {
      * @return list of products
      */
     public List<String> getProductsForCategory(String categoryName){
-        return null;
+    	if (!categories.containsKey(categoryName))
+    		return new ArrayList<>();
+    	
+    	Category c = categories.get(categoryName);
+    	
+    	return products.values().stream()
+    		.filter((Product p) -> {return p.getCategory().equals(c);})
+    		.sorted()
+    		.map(Product::getName)
+    		.toList();
     }
 
     /**
@@ -88,7 +126,14 @@ public class Sports {
      * @return list of products
      */
     public List<String> getProductsForActivity(String activityName){
-        return null;
+    	if (!activities.contains(activityName))
+    		return new ArrayList<>();
+    	
+    	return products.values().stream()
+    		.filter((Product p) -> {return p.getActivity().equals(activityName);})
+    		.sorted()
+    		.map(Product::getName)
+    		.toList();
     }
 
     /**
@@ -100,7 +145,21 @@ public class Sports {
      * @return list of products
      */
     public List<String> getProducts(String activityName, String... categoryNames){
-        return null;
+    	if (!activities.contains(activityName))
+    		return new ArrayList<>();
+    	
+    	List<String> searchCategoriesNames = Arrays.asList(categoryNames);
+    	List<Category> searchCategories = categories.values().stream()
+    		.filter((Category c) -> {return searchCategoriesNames.contains(c.getName());})
+    		.toList();
+    	
+    	return products.values().stream()
+    		.filter((Product p) -> {
+    			return (p.getActivity().equals(activityName) || searchCategories.contains(p.getCategory()));
+    		})
+    		.sorted()
+    		.map(Product::getName)
+    		.toList();
     }
 
     //    //R3
@@ -114,6 +173,9 @@ public class Sports {
      * @throws SportsException thrown numStars is not correct
      */
     public void addRating(String productName, String userName, int numStars, String comment) throws SportsException {
+    	if (products.containsKey(productName)) {
+    		products.get(productName).addRating(userName, numStars, comment);
+    	}
     }
 
 
@@ -126,7 +188,13 @@ public class Sports {
      * @return list of ratings sorted by stars
      */
     public List<String> getRatingsForProduct(String productName) {
-        return null;
+    	if (!products.containsKey(productName))
+    		return new ArrayList<>();
+    	
+    	return products.get(productName).getRatings().stream()
+    		.sorted()
+    		.map(Rating::toString)
+    		.toList();
     }
 
 
@@ -139,7 +207,13 @@ public class Sports {
      * @return average rating
      */
     public double getStarsOfProduct (String productName) {
-        return -1.0;
+    	if (!products.containsKey(productName))
+    		return 0;
+    	
+    	return products.get(productName).getRatings().stream()
+    		.collect(
+    			averagingInt(Rating::getStars)
+    		);
     }
 
     /**
@@ -148,8 +222,11 @@ public class Sports {
      * @return average stars
      */
     public double averageStars() {
-        return -1.0;
-
+    	return products.values().stream()
+    		.flatMap((Product p) -> p.getRatings().stream())
+    		.collect(
+    			averagingInt(Rating::getStars)
+    		);
     }
 
     //R5 Statistiche
@@ -161,7 +238,21 @@ public class Sports {
      * @return the map associating activity name to average stars
      */
     public SortedMap<String, Double> starsPerActivity() {
-        return null;
+    	SortedMap<String,Double> activityRatings = new TreeMap<>();
+    	
+    	 Map<String,List<Product>> lp = products.values().stream()
+ 		.filter((Product p) -> p.getRatings().size() > 0)
+ 		.collect(
+ 			groupingBy(Product::getActivity)
+ 		);
+    	for (String act: lp.keySet()) {
+    		activityRatings.put(act, lp.get(act).stream()
+    			.flatMap((Product p) -> p.getRatings().stream())
+    			.collect(
+    	    			averagingInt(Rating::getStars)
+    	    		));
+    	}
+        return activityRatings;
     }
 
     /**
@@ -173,7 +264,23 @@ public class Sports {
      * @return the map linking the average stars to the list of products
      */
     public SortedMap<Double, List<String>> getProductsPerStars () {
-        return null;
+    	SortedMap<Double, List<String>> sp = new TreeMap<Double,List<String>>(Comparator.reverseOrder());
+    	
+    	Map<String,Double> pr = products.values().stream()
+    		.filter((Product p) -> p.getRatings().size() > 0)
+    		.collect(
+    			toMap(	
+    				Product::getName,
+    				(Product p) -> p.getAverageRating()
+    			)
+    		);
+    	
+    	for (String p : pr.keySet()) {
+    		if (!sp.containsKey(pr.get(p)))
+    			sp.put(pr.get(p), new ArrayList<String>());
+    		sp.get(pr.get(p)).add(p);
+    	}
+  
+        return sp;
     }
-
 }

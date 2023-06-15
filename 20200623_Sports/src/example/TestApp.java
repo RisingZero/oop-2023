@@ -89,6 +89,7 @@ public void test() throws SportsException {
     assertEquals("{Swimming=4.0, Trekking=2.0}", sm.toString());
     
     SortedMap<Double, List<String>> sml = sports.getProductsPerStars();
+    System.out.println(sml);
     assertEquals("{4.0=[p2], 2.0=[p0, p1]}", sml.toString());
 }
 }
