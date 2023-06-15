@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="ISO-8859-1">
+	<title>Sports</title>
+	<link href=".css.css" rel="stylesheet" type="text/css">
+	<style>
+		@media print {  /* adjusted to print the html to a single-page pdf */
+		body {
+			font-size: 10pt;
+		}
+	</style>
+</head>
+<body>
+<h1 class="title">Sports</h1>
+</header>
+<!--
+> To generate html and pdf use
+> ```bash
+> $ pandoc -s -f markdown+Smart requirients.md -c .css.css -o requirients.html
+> $ pandoc -s -f markdown+Smart requirients.md -o requirients.pdf
+> ```
+-->
+<p>The program implements the back-end of a sport equipment evaluation portal.</p>
+<p>All the classes are located in <b>sports</b> package. The main class is <b>Sports</b>. The class <b>TestApp</b> in the package <b>example</b> contains an example. The exceptions are thrown using the class <b>SportsException</b>.</p>
+<p>It is possible to access <a href="https://oop.polito.it/api/index.html">Java API documentation</a>.</p>
+<h2 id="r1-activities-and-categories">R1: Activities and Categories</h2>
+<p>The method <b>defineActivities(String... activities)</b> defines the sport activities supported by the portal. The method throws an exception if no activity is provided.</p>
+<p>The method <b>getActivities()</b> returns the list of the defined activities, sorted alphabetically.</p>
+<p>The method <b>addCategory(String name, String... linkedActivities)</b> adds a category of products and the activites related to that category. An exception is thrown if any of the activites has not been previously defined.</p>
+<p>The method <b>countCategories()</b> returns the number of categories that have been defined.</p>
+<p>The method <b>getCategoriesForActivity(String activity)</b> generates an alphabetically sorted list containing the category names related to the given sport activity. Returns an empty list if either no category has been defined for the activity or the activity does not exist.</p>
+<h2 id="r2-products">R2: Products</h2>
+<p>The method <b>addProduct(String name, String activity, String category)</b> adds a product with its name, activity and the category it belongs to. The method throws an exception if a product with the same name already exists.</p>
+<p>The method <b>getProductsForCategory(String categoryName)</b> returns a list of product names in the given category, sorted alphabetically. If the category has not been defined or does not contain any product, an empty list is returned.</p>
+<p>The method <b>getProductsForActivity(String activityName)</b> returns a list of product names for the given activity, sorted alphabetically. If the activity has not been defined or there are no related products, an empty list is returned.</p>
+<p>The method <b>getProducts(String activityName, String categoryNames)</b> returns a list of product names sorted alphabetically, that belong to the given activity and to one of the given categories. If the activity is not defined or it has no products, an empty list is returned.</p>
+<h2 id="r3-users-and-ratings">R3: Users and Ratings</h2>
+<p>The method <b>addRating(String productName, String userName, int numStars, String comment)</b> adds a rating for a product from a user of the system. A product is rated with a number of stars from 0 to 5 and a comment. An exception is thrown if the number of stars is not between 0 and 5 (included).</p>
+<p>The method <b>getRatingsForProduct(String productName)</b> produces a list of ratings in the following format: <i>"# : [Comment]"</i>, where <i>#</i> is the number of stars, while <i>[Comment]</i> is the associated comment. The list has to be ordered by the descending number of stars. An empty list is returned if no user has provided a rating for the given product.</p>
+<h2 id="r4-evaluations">R4: Evaluations</h2>
+<p>The method <b>getStarsOfProduct(String productName)</b> returns the average number of stars for a given product.</p>
+<p>The method <b>averageStars()</b> calculates the average number of stars for all the ratings.</p>
+<h2 id="r5-statistics">R5: Statistics</h2>
+<p>The method <b>starsPerActivity()</b> returns a map that associates a name of the activity to the average number of stars for the products belonging to that activity, with the activity names sorted alphabetically. Activities whose products have not been rated should not appear in the result.</p>
+<p>The method <b>getProductsPerStars()</b> gives a map that associates the average number of stars with the list of product names that have this average, with the average values sorted in descending order and the names of the products sorted alphabetically. Products without reviews are discarded.</p>
+</body>
+</html>

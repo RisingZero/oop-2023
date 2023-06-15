@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="ISO-8859-1">
+	<title>Sports</title>
+	<link href=".css.css" rel="stylesheet" type="text/css">
+	<style>
+		@media print {  /* adjusted to print the html to a single-page pdf */
+		body {
+			font-size: 10pt;
+		}
+	</style>
+</head>
+<body>
+
+<h1>Sports</h1>
+Il programma implementa il back-end di un portale di valutazioni di attrezzature sportive. 
+<p>
+Tutte le classi si trovano nel package <b>sports</b>. La classe principale è <b>Sports</b>. 
+La classe <b>TestApp</b> nel package <b>example</b> contiene un esempio.
+ Le eccezioni sono lanciate mediante la classe <b>SportsException</b>. 
+<p>
+&Egrave; possibile accedere alla <a href="https://oop.polito.it/api" target="_blank">documentazione delle API Java</a>.
+</p>
+ 
+<h2>R1 Attività e Categorie</h2>
+<p>
+Il metodo <b>defineActivities(String... activities)</b> definisce le attività sportive trattate dal portale. Il metodo lancia un'eccezione se non è passata alcuna attività.
+<p>
+Il metodo <b>getActivities()</b> dà la lista delle attività definite, ordinate alfabeticamente.
+<p>
+Il metodo <b>addCategory(String name, String... linkedActivities)</b> aggiunge una categoria di prodotti e le attività collegate ad essi. Lancia un'eccezione se qualcuna delle attività non è definita.
+<p>
+Il metodo <b>countCategories()</b> restituisce il numero di categorie definite.
+<p>
+Il metodo <b>getCategoriesForActivity(String activity)</b> produce la lista ordinata alfabeticamente dei nomi delle categorie legate all'attività sportiva indicata. Dà una lista vuota se non è definita nessuna categoria per l'attività, o se l'attività non esiste.
+
+
+
+<h2>R2 Prodotti</h2>
+<p>
+Il metodo <b>addProduct(String name, String activity, String category)</b> aggiunge un prodotto di cui sono dati il nome, l'attività e la categoria di appartenenza. Lancia un'eccezione se esiste già un prodotto con quel nome.
+<p>
+Il metodo <b>getProductsForCategory(String categoryName)</b> restituisce la lista ordinata alfabeticamente dei nomi dei prodotti della categoria indicata.
+Se la categoria non è definita o non ha prodotti viene restituita una lista vuota.
+<p>
+Il metodo <b>getProductsForActivity(String activityName)</b> restituisce la lista ordinata alfabeticamente dei nomi dei prodotti dell'attività indicata.
+Se l'attività non è definita o non ha prodotti viene restituita una lista vuota.
+<p>
+Il metodo <b>getProducts(String activityName, String... categoryNames)</b> restituisce la lista ordinata dei nomi dei prodotti che appartengono all'attività indicata e ad una delle categorie indicate.
+Se l'attività non è definita o non ha prodotti viene restituita una lista vuota.
+<p>
+
+
+<h2>R3 Utenti e recensioni</h2>
+<p>
+Il metodo <b>addRating(String productName, String userName, int numStars, String comment)</b> aggiunge una recensione per un prodotto da parte di un utente del sistema. La recensione prevede un voto, come numero di stelle tra 0 e 5, ed un commento. Lancia un'eccezione se il numero di stelle non è compreso tra 0 e 5 (inclusi).
+<p>
+Il metodo <b>getRatingsForProduct(String productName)</b> produce la lista ordinata per numero di stelle decrescente delle recensioni formattate come <i>"# : [Comment]"</i>, dove <i>#</i> è il numero di stelle mentre <i>[Comment]</i> è il commento associato. Dà una lista vuota se nessun utente ha inserito recensioni per il prodotto.
+
+
+<h2>R4 Valutazioni</h2>
+<p>
+Il metodo <b>getStarsOfProduct(String productName)</b> dà il numero medio di stelle delle recensioni del prodotto indicato.
+
+<p>
+Il metodo <b>averageStars()</b> calcola il numero medio di stelle su tutte le recensioni.
+
+
+<h2>R5 Statistiche</h2>
+<p>
+Il metodo <b>starsPerActivity()</b> dà una mappa che associa il nome di una attività alla media di stelle dei prodotti ad essa associati, con i nomi delle attività ordinati alfabeticamente. Nel risultato non devono comparire le attività i cui prodotti non hanno ricevuto recensioni.
+<p>
+Il metodo <b>getProductsPerStars</b> dà una mappa che associa al numero medio di stelle la lista dei nomi di prodotti che hanno tale media, con le medie ordinate in modo decrescente e i nomi dei prodotti ordinati alfabeticamente. Sono scartati i prodotti senza recensioni.
+
+</body>
+</html>
