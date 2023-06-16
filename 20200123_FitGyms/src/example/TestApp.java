@@ -54,6 +54,10 @@ public void test() throws FitException {
 	assertEquals("Lorenzo Bianchi", f.getCustomer(one));
 	assertEquals("Cristiano Rossi", f.getCustomer(two));
 	assertEquals("The first customerId should be 1", 1, one);
+	try {
+        f.getCustomer(3);
+        fail("Customer 3 should not exists");
+    } catch(Exception ex){} //ok
 
 	
 	// R4
