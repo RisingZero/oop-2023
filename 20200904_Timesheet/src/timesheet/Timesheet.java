@@ -21,7 +21,7 @@ public class Timesheet {
 			return;
 		
 		for (int day : holidays) {
-			if (day >= 1 || day <= 365) {
+			if (day >= 1 && day <= 365) {
 				this.holidays.add(day);
 			}
 		}
@@ -130,7 +130,7 @@ public class Timesheet {
 		if (!workers.containsKey(workerID) || !projects.containsKey(projectName))
 			throw new TimesheetException();
 		
-		if (day < 1 || day > 365)
+		if (day < 1 || day > 365 || this.isHoliday(day))
 			throw new TimesheetException();
 		
 		if (workedHours < 0)
