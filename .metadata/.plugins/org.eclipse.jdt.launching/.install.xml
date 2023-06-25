@@ -1,4 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <dirs>
+    <entry loc="/Library/Java/JavaVirtualMachines/jdk-11.0.1.jdk/Contents/Home" stamp="1538828945000"/>
+    <entry loc="/Library/Java/JavaVirtualMachines/adoptopenjdk-8.jdk/Contents/Home" stamp="1618959449000"/>
+    <entry loc="/Users/andrea/.p2/pool/plugins/org.eclipse.justj.openjdk.hotspot.jre.full.macosx.x86_64_17.0.6.v20230204-1729" stamp="1679497495561"/>
+    <entry loc="/Users/andrea/.p2/pool/plugins/org.eclipse.justj.openjdk.hotspot.jre.full.macosx.x86_64_17.0.6.v20230204-1729/jre" stamp="1679497495561"/>
     <entry loc="C:\Program Files\Eclipse Adoptium\jdk-17.0.6.10-hotspot" stamp="1674775101099"/>
 </dirs>

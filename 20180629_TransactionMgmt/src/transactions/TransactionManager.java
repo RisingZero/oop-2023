@@ -22,8 +22,10 @@ public class TransactionManager {
 		regions.put(regionName, r);
 		
 		for (String place: placeNames) {
-			r.addPlace(place);
-			places.add(place);
+			if (!places.contains(place)) {
+				r.addPlace(place);
+				places.add(place);
+			}
 		}
 		
 		return r.getPlaces();
@@ -34,8 +36,8 @@ public class TransactionManager {
 		carriers.put(carrierName, c);
 		
 		for (String rName: regionNames) {
-			if (regions.)
-			c.addRegion(regions.get(rName));
+			if (regions.containsKey(rName))
+				c.addRegion(regions.get(rName));
 		}
 
 		return c.getServedRegions().stream().map(Region::getName).toList();
@@ -122,7 +124,7 @@ public class TransactionManager {
 						Entry::getKey,
 						toList())
 				)
-			);
+			).descendingMap();
 	}
 	
 	public SortedMap<String, Integer> scorePerCarrier(int minimumScore) {
