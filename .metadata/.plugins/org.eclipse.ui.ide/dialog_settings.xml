@@ -13,8 +13,8 @@
 		<item key="WizardProjectsImportPage.STORE_CLOSE_CREATED_PROJECTS_ID" value="false"/>
 		<item key="WizardProjectsImportPage.STORE_HIDE_CONFLICTING_PROJECTS_ID" value="false"/>
 		<list key="WizardProjectsImportPage.STORE_DIRECTORIES">
-			<item value="/Users/andrea/Informatica/Dropbox (Politecnico Di Torino Studenti)/OOP/EXAMS"/>
 			<item value="C:\Users\Utente\Informatica\Dropbox (Politecnico Di Torino Studenti)\OOP\EXAMS"/>
+			<item value="/Users/andrea/Informatica/Dropbox (Politecnico Di Torino Studenti)/OOP/EXAMS"/>
 		</list>
 		<list key="WizardProjectsImportPage.STORE_ARCHIVES">
 			<item value=""/>

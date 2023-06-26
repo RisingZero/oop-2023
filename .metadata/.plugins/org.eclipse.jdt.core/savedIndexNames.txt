@@ -1,5 +1,3 @@
 INDEX VERSION 1.132+C:\Users\Utente\Informatica\Dropbox (Politecnico Di Torino Studenti)\OOP\EXAMS\.metadata\.plugins\org.eclipse.jdt.core
+2466985015.index
 1865797976.index
-3017201600.index
-1306397688.index
-3766342777.index
